@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AuraFi
 
-## Getting Started
+AuraFi is a modern, comprehensive personal finance application designed to provide users with complete visibility and control over their financial health. By securely aggregating banking data, AuraFi empowers users to track net worth, monitor transactions, and manage budgets in real time.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Financial Dashboard**: A centralized overview of your total net worth, recent spending, and active accounts.
+- **Bank Synchronization**: Secure integration with external financial institutions to pull real-time account balances and transaction history.
+- **Budget Management**: Set and monitor monthly spending limits across various categories with visual progress tracking.
+- **Transaction Analytics**: Categorized transaction histories and intelligent spending breakdowns.
+- **Multi-Currency Support**: Native ability to view your finances in your preferred local currency with automatic conversion capabilities.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+AuraFi is built using a modern, scalable, and type-safe architecture:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Frontend framework**: Next.js (App Router) with React
+- **Styling**: Tailwind CSS
+- **Authentication**: NextAuth.js
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Financial Data API**: Plaid
 
-## Learn More
+## Plaid Sandbox Integration
 
-To learn more about Next.js, take a look at the following resources:
+AuraFi utilizes the Plaid API to securely sync financial data. For development and testing purposes, the application is configured to run entirely within the Plaid Sandbox environment. 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The Plaid Sandbox provides simulated bank accounts and transactions, allowing developers to test the full lifecycle of linking accounts, fetching balances, and syncing transactions without connecting to actual financial institutions or using real credentials.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To use the sandbox environment locally:
+1. Obtain Sandbox credentials from the Plaid developer dashboard.
+2. Provide them in your environment variables.
+3. Use the Plaid Sandbox test credentials (e.g., username `user_good`, password `pass_good`) when prompted by the Plaid Link interface.
 
-## Deploy on Vercel
+## Local Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+To run AuraFi locally, ensure you have Node.js and PostgreSQL installed.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository.
+2. Install dependencies using `npm install`.
+3. Configure your `.env` file with your database connection string and Plaid Sandbox credentials.
+4. Run the database migrations using `npx prisma db push`.
+5. Start the development server with `npm run dev`.
+
+The application will be available at `http://localhost:3000`.
+
+## License
+
+This project is licensed under the MIT License.
