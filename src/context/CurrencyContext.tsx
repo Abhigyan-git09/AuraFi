@@ -8,6 +8,8 @@ interface CurrencyContextType {
   currency: CurrencyCode;
   setCurrency: (code: CurrencyCode) => void;
   formatValue: (value: number) => string;
+  convertToLocal: (usdValue: number) => number;
+  convertFromLocal: (localValue: number) => number;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
@@ -28,15 +30,19 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("aurafi-currency", code);
   };
 
-  const formatValue = (value: number) => {
-    // Conversions from USD base rates (approximate sandbox rates)
-    let rate = 1;
-    if (currency === "EUR") rate = 0.92;
-    else if (currency === "GBP") rate = 0.79;
-    else if (currency === "INR") rate = 83.3;
-    else if (currency === "CAD") rate = 1.36;
+  const getRate = () => {
+    if (currency === "EUR") return 0.92;
+    if (currency === "GBP") return 0.79;
+    if (currency === "INR") return 83.3;
+    if (currency === "CAD") return 1.36;
+    return 1;
+  };
 
-    const converted = value * rate;
+  const convertToLocal = (usdValue: number) => usdValue * getRate();
+  const convertFromLocal = (localValue: number) => localValue / getRate();
+
+  const formatValue = (value: number) => {
+    const converted = convertToLocal(value);
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: currency,
@@ -44,7 +50,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency, formatValue }}>
+    <CurrencyContext.Provider value={{ currency, setCurrency, formatValue, convertToLocal, convertFromLocal }}>
       {children}
     </CurrencyContext.Provider>
   );

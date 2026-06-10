@@ -22,7 +22,7 @@ interface Budget {
 }
 
 export default function BudgetsPage() {
-  const { formatValue } = useCurrency();
+  const { formatValue, currency, convertToLocal, convertFromLocal } = useCurrency();
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -76,7 +76,8 @@ export default function BudgetsPage() {
     setDialogMode("edit");
     setSelectedBudget(budget);
     setCategory(budget.category);
-    setLimit(budget.limit.toString());
+    // Convert USD from DB to user's local currency for the input field
+    setLimit(convertToLocal(budget.limit).toFixed(2));
     setIsDialogOpen(true);
   };
 
@@ -85,13 +86,16 @@ export default function BudgetsPage() {
     const limitNum = parseFloat(limit);
     if (isNaN(limitNum) || limitNum <= 0) return;
 
+    // Convert local currency input back to base USD for database storage
+    const limitUsd = convertFromLocal(limitNum);
+
     setLoading(true);
     try {
       if (dialogMode === "create") {
         const res = await fetch("/api/budgets", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ category, limit: limitNum }),
+          body: JSON.stringify({ category, limit: limitUsd }),
         });
         if (res.ok) {
           await fetchBudgets();
@@ -100,7 +104,7 @@ export default function BudgetsPage() {
         const res = await fetch(`/api/budgets/${selectedBudget.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ limit: limitNum }),
+          body: JSON.stringify({ limit: limitUsd }),
         });
         if (res.ok) {
           await fetchBudgets();
@@ -354,7 +358,7 @@ export default function BudgetsPage() {
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] text-text-secondary uppercase font-bold tracking-wider">
-                  Monthly Limit ($)
+                  Monthly Limit ({currency})
                 </label>
                 <input
                   type="number"
