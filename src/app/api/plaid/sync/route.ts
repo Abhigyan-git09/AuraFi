@@ -103,6 +103,20 @@ export async function POST() {
       const removed: any[] = [];
 
       try {
+        // Force Plaid Sandbox to flush transactions immediately
+        if (process.env.PLAID_ENV === "sandbox") {
+          try {
+            await plaidClient.sandboxItemFireWebhook({
+              access_token: item.accessToken,
+              webhook_code: "SYNC_UPDATES_AVAILABLE",
+            });
+            // Give Plaid a brief moment to process the forced webhook
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          } catch (sandboxError) {
+            console.warn("Could not fire sandbox webhook (item may already be ready or invalid):", sandboxError);
+          }
+        }
+
         while (hasMore) {
           const response = await plaidClient.transactionsSync({
             access_token: item.accessToken,
@@ -125,10 +139,19 @@ export async function POST() {
         });
         const accountMap = new Map(accounts.map((a) => [a.plaidAccountId, a.id]));
 
+        // To prevent the dashboard from looking overwhelming with 2+ years of sandbox data,
+        // we'll filter the added transactions to only keep the most recent 60 days.
+        const sixtyDaysAgo = new Date();
+        sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+        
+        const filteredAdded = process.env.PLAID_ENV === "sandbox" 
+          ? added.filter(t => new Date(t.date) >= sixtyDaysAgo)
+          : added;
+
         // Write updates in a transaction
         await db.$transaction(async (tx) => {
           // Process Added
-          for (const t of added) {
+          for (const t of filteredAdded) {
             const dbAccountId = accountMap.get(t.account_id);
             if (!dbAccountId) continue; // Skip if account is not saved
 
