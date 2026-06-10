@@ -1,26 +1,98 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-bg: var(--bg-app);
+  --color-brand-sidebar: var(--bg-sidebar);
+  --color-brand-surface: var(--bg-surface);
+  --color-brand-surface-hover: var(--bg-surface-hover);
+  --color-brand-border: var(--border-color);
+  --color-brand-border-hover: var(--border-color-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-brand-input: var(--bg-input);
+  
+  --color-accent-purple: #a855f7;
+  --color-accent-fuchsia: #ec4899;
+  --color-semantic-success: #10b981;
+  --color-semantic-error: #f43f5e;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Dark mode by default */
+  --bg-app: #0b0914;
+  --bg-sidebar: #0f0d1c;
+  --bg-surface: rgba(255, 255, 255, 0.02);
+  --bg-surface-hover: rgba(255, 255, 255, 0.05);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color-hover: rgba(255, 255, 255, 0.16);
+  --text-primary: #ffffff;
+  --text-secondary: #948fb0;
+  --text-muted: #64748b;
+  --bg-input: #0b0914;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.light-mode-fallback, html.light-mode-fallback {
+  /* Light mode overrides */
+  --bg-app: #f6f5fa;
+  --bg-sidebar: #ffffff;
+  --bg-surface: rgba(15, 13, 28, 0.02);
+  --bg-surface-hover: rgba(168, 85, 247, 0.05);
+  --border-color: rgba(15, 13, 28, 0.08);
+  --border-color-hover: rgba(168, 85, 247, 0.2);
+  --text-primary: #0f0d1c;
+  --text-secondary: #5a547a;
+  --text-muted: #7e789f;
+  --bg-input: #ffffff;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-color-hover);
+}
+
+/* Glassmorphism base panels */
+.glass-panel {
+  background: var(--bg-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-color-hover);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Glow effects */
+.radial-glow {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
+}
+
+.semantic-income {
+  color: #10b981;
+}
+
+.semantic-expense {
+  color: #f43f5e;
 }

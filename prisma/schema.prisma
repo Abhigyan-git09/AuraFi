@@ -1,0 +1,108 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String?
+  email        String        @unique
+  passwordHash String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  plaidItems   PlaidItem[]
+  accounts     Account[]
+  transactions Transaction[]
+  budgets      Budget[]
+  settings     UserSettings?
+}
+
+model PlaidItem {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken     String
+  itemId          String    @unique
+  institutionId   String
+  institutionName String
+  cursor          String?
+  lastSyncedAt    DateTime?
+  createdAt       DateTime  @default(now())
+  accounts        Account[]
+
+  @@index([userId])
+}
+
+model Account {
+  id               String        @id @default(uuid())
+  plaidAccountId   String        @unique
+  itemId           String
+  plaidItem        PlaidItem     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  officialName     String?
+  type             String
+  subtype          String?
+  currentBalance   Float
+  availableBalance Float?
+  limitBalance     Float?
+  isoCurrencyCode  String?
+  mask             String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  transactions     Transaction[]
+
+  @@index([userId])
+  @@index([itemId])
+}
+
+model Transaction {
+  id                          String   @id @default(uuid())
+  plaidTransactionId          String   @unique
+  accountId                   String
+  account                     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  userId                      String
+  user                        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                        String
+  merchantName                String?
+  amount                      Float
+  date                        DateTime
+  category                    String[]
+  personalFinanceCategory     String?
+  personalFinanceCategoryIcon String?
+  isoCurrencyCode             String?
+  pending                     Boolean  @default(false)
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([date])
+}
+
+model Budget {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category     String
+  monthlyLimit Float
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, category])
+}
+
+model UserSettings {
+  id                 String   @id @default(uuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailNotifications Boolean  @default(true)
+  weeklyReport       Boolean  @default(true)
+  instantAlerts      Boolean  @default(false)
+  updatedAt          DateTime @updatedAt
+}
