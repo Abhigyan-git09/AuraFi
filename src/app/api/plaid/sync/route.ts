@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { plaidClient } from "@/lib/plaid";
 import { db } from "@/lib/db";
+import { SandboxItemFireWebhookRequestWebhookCodeEnum } from "plaid";
 
 export async function POST() {
   try {
@@ -108,7 +109,7 @@ export async function POST() {
           try {
             await plaidClient.sandboxItemFireWebhook({
               access_token: item.accessToken,
-              webhook_code: "SYNC_UPDATES_AVAILABLE",
+              webhook_code: SandboxItemFireWebhookRequestWebhookCodeEnum.SyncUpdatesAvailable,
             });
             // Give Plaid a brief moment to process the forced webhook
             await new Promise((resolve) => setTimeout(resolve, 1000));
