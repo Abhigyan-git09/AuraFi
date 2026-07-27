@@ -95,7 +95,9 @@ export async function POST() {
     let totalRemoved = 0;
 
     for (const item of plaidItems) {
-      let cursor = item.cursor || undefined;
+      // In sandbox mode, always fetch from the beginning to ensure data is returned
+      // (Plaid sandbox doesn't always generate continuous 'new' transactions for an item)
+      let cursor = process.env.PLAID_ENV === "sandbox" ? undefined : (item.cursor || undefined);
       let hasMore = true;
 
       // Temporary lists for this item
@@ -141,12 +143,9 @@ export async function POST() {
         const accountMap = new Map(accounts.map((a) => [a.plaidAccountId, a.id]));
 
         // To prevent the dashboard from looking overwhelming with 2+ years of sandbox data,
-        // we'll filter the added transactions to only keep the most recent 60 days.
-        const sixtyDaysAgo = new Date();
-        sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
-        
+        // we'll filter the added transactions to only keep the most recent 50 items.
         const filteredAdded = process.env.PLAID_ENV === "sandbox" 
-          ? added.filter(t => new Date(t.date) >= sixtyDaysAgo)
+          ? added.slice(-50)
           : added;
 
         // Write updates in a transaction
