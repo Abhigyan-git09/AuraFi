@@ -10,6 +10,38 @@ AuraFi is a modern, comprehensive personal finance application designed to provi
 - **Transaction Analytics**: Categorized transaction histories and intelligent spending breakdowns.
 - **Multi-Currency Support**: Native ability to view your finances in your preferred local currency with automatic conversion capabilities.
 
+## Showcase
+
+<table style="width: 100%;">
+  <tr>
+    <td align="center">
+      <strong>Analytics Dashboard</strong><br/>
+      <img src="docs/images/analytics.png" alt="Analytics Dashboard" width="400"/>
+    </td>
+    <td align="center">
+      <strong>Financial Overview</strong><br/>
+      <img src="docs/images/dashboard.png" alt="Financial Overview" width="400"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>Transactions & Sync</strong><br/>
+      <img src="docs/images/transactions.png" alt="Transactions" width="400"/>
+    </td>
+    <td align="center">
+      <strong>Connected Accounts</strong><br/>
+      <img src="docs/images/accounts.png" alt="Accounts" width="400"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>Budget Management</strong><br/>
+      <img src="docs/images/budgets.png" alt="Budgets" width="400"/>
+    </td>
+    <td></td>
+  </tr>
+</table>
+
 ## Tech Stack
 
 AuraFi is built using a modern, scalable, and type-safe architecture:
